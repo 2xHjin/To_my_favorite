@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">Tomyfavorite</string>
+
+
+    <string name="home_appbar_title">나의 최애에게</string>
+    <string name="home_appbar_cd_menu">메뉴 열기</string> <string name="home_pager_cd_photo">최애 사진 슬라이더 이미지 %1$d번</string>
+
+    <string name="home_title_recent_photos">최근 사진</string>
+    <string name="home_card_cd_recent_photo">최근 저장된 사진 카드</string>
+
+    <string name="home_title_recent_memos">최근 메모</string>
+
+    <string name="home_tab_title_home">홈</string>
+    <string name="home_tab_title_memo">메모장</string>
+    <string name="home_tab_title_settings">설정</string>
+
 </resources>

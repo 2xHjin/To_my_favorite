@@ -25,7 +25,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
@@ -59,12 +58,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.tomyfavorite.R
+import com.example.tomyfavorite.ui.components.HomeTab
+import com.example.tomyfavorite.ui.theme.LavenderBlush
+import com.example.tomyfavorite.ui.theme.PastelPink
+import com.example.tomyfavorite.ui.theme.SoftCreamPink
+import com.example.tomyfavorite.ui.theme.SoftDarkCharcoal
+import com.example.tomyfavorite.ui.theme.SoftGrayDivider
 
 
 @Composable
@@ -72,16 +79,10 @@ fun HomeSectionDivider() {
     HorizontalDivider(
         modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),// 양옆 여백을 주어 선이 너무 꽉 차지 않게 예쁘게 조절
         thickness = 1.dp,// 선의 두께를 아주 가늘고 섬세하게 1.dp로 지정
-        color = Color(0xFFE0E0E0)// 다꾸 감성을 해치지 않는 은은하고 연한 회색
+        color = SoftGrayDivider// 다꾸 감성을 해치지 않는 은은하고 연한 회색
     )
 }
 
-// 탭의 종류를 안전하게 관리하기 위해 선언한 Enum Class입니다. (SoC 구조)
-enum class HomeTab(val title: String, val icon: ImageVector) {
-    HOME("홈", Icons.Default.Home),
-    MEMO("메모장", Icons.AutoMirrored.Filled.List),
-    SETTINGS("설정", Icons.Default.Settings)
-}
 
 // 기존 탭 Enum은 그대로 유지하되, 구조 결합용으로 사용합니다.
 enum class CustomTab { MEMO, SETTINGS }
@@ -96,9 +97,9 @@ fun HomeTopAppBar(
     CenterAlignedTopAppBar(
         title = {
             Text(
-                text = "나의 최애에게",
+                text = stringResource(id = R.string.home_appbar_title),
                 style = TextStyle(
-                    color = Color(0xFF4A4A4A), // 부드러운 글자 색상 (Hex: 4A4A4A)
+                    color = SoftDarkCharcoal, // 부드러운 글자 색상 (Hex: 4A4A4A) 먹색
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                     // 나중에 여기 가독성 좋은 다꾸용 폰트(fontFamily)를 추가할 수 있어요!
@@ -109,13 +110,13 @@ fun HomeTopAppBar(
             IconButton(onClick = onMenuClick) {
                 Icon(
                     imageVector = Icons.Default.Menu, // 햄버거 모양 아이콘
-                    contentDescription = "메뉴 열기",
-                    tint = Color(0xFF4A4A4A) // 아이콘 색상도 글자색과 통일
+                    contentDescription = stringResource(id = R.string.home_appbar_cd_menu),
+                    tint = SoftDarkCharcoal // 아이콘 색상도 글자색과 통일
                 )
             }
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = Color(0xFFFFE4E1) // 은은한 파스텔 핑크 배경색 (Hex: FFE4E1)
+            containerColor = PastelPink // 은은한 파스텔 핑크 배경색 (Hex: FFE4E1)
         )
     )
 }
@@ -134,7 +135,7 @@ fun FavoriteImagePager(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .background(Color(0xFFFFE4E1)) // PinkPastel
+            .background(PastelPink) // PinkPastel
             .padding(vertical = 16.dp, horizontal = 24.dp)
     ) {
         // ★ 1. 둥근 카드 전체를 감싸는 바깥쪽 Card입니다.
@@ -177,7 +178,7 @@ fun FavoriteImagePager(
                                 .size(8.dp)
                                 .clip(CircleShape)
                                 .background(
-                                    if (isSelected) Color(0xFF4A4A4A) else Color(0xFF4A4A4A).copy(alpha = 0.3f)
+                                    if (isSelected) SoftDarkCharcoal else SoftDarkCharcoal.copy(alpha = 0.3f)
                                 )
                         )
                     }
@@ -246,9 +247,9 @@ fun RecentPhotosSection(
     ) {
         // 1. 타이틀 영역: 왼쪽 정렬된 '최근 사진' 텍스트
         Text(
-            text = "최근 사진",
+            text = stringResource(id = R.string.home_title_recent_photos),
             style = TextStyle(
-                color = Color(0xFF4A4A4A), // 앱바와 통일한 부드러운 먹색
+                color = SoftDarkCharcoal, // 앱바와 통일한 부드러운 먹색
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
             ),
@@ -305,9 +306,9 @@ fun RecentMemosSection(
     ) {
         // 1. 타이틀 영역: '최근 메모' 텍스트 (최근 사진 타이틀과 좌측 여백 통일)
         Text(
-            text = "최근 메모",
+            text = stringResource(id = R.string.home_title_recent_memos),
             style = TextStyle(
-                color = Color(0xFF4A4A4A), // 부드러운 먹색
+                color = SoftDarkCharcoal, // 부드러운 먹색
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
             ),
@@ -327,7 +328,7 @@ fun RecentMemosSection(
                 Card(
                     shape = RoundedCornerShape(16.dp), // 모서리가 둥근 사각형
                     colors = CardDefaults.cardColors(
-                        containerColor = Color(0xFFFFF5F5) // 아주 연한 핑크 화이트 크림 색상
+                        containerColor = SoftCreamPink // 아주 연한 핑크 화이트 크림 색상
                     ),
                     elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                     modifier = Modifier.size(width = 130.dp, height = 130.dp) // 정사각형에 가까운 비율
@@ -387,7 +388,7 @@ fun HomeCustomBottomBar(
         BottomAppBar(
             // 피그마처럼 상단 모서리만 아주 둥글게 깎아서 다꾸 속지 느낌을 냅니다.
             modifier = Modifier.clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
-            containerColor = Color(0xFFFFE4E1), // 파스텔 핑크 테마 색상
+            containerColor = PastelPink, // 파스텔 핑크 테마 색상
             tonalElevation = 0.dp
         ) {
             // 왼쪽 메뉴: 메모장
@@ -399,7 +400,7 @@ fun HomeCustomBottomBar(
                 Icon(
                     imageVector = Icons.Default.List,
                     contentDescription = "메모장",
-                    tint = if (isMemoSelected) Color(0xFF4A4A4A) else Color(0xFF4A4A4A).copy(alpha = 0.4f)
+                    tint = if (isMemoSelected) SoftDarkCharcoal else SoftDarkCharcoal.copy(alpha = 0.4f)
                 )
             }
 
@@ -415,7 +416,7 @@ fun HomeCustomBottomBar(
                 Icon(
                     imageVector = Icons.Default.Settings,
                     contentDescription = "설정",
-                    tint = if (isSettingsSelected) Color(0xFF4A4A4A) else Color(0xFF4A4A4A).copy(alpha = 0.4f)
+                    tint = if (isSettingsSelected) SoftDarkCharcoal else SoftDarkCharcoal.copy(alpha = 0.4f)
                 )
             }
         }
@@ -430,8 +431,8 @@ fun HomeCustomBottomBar(
                 .size(60.dp),
             shape = CircleShape, // 완벽한 동그라미 반원 형태 강제
             // 홈 탭이 선택되면 더 부드러운 화이트 핑크, 해제되면 기본 파스텔 핑크
-            containerColor = if (isHomeSelected) Color(0xFFFFF0F5) else Color(0xFFFFE4E1),
-            contentColor = Color(0xFF4A4A4A),
+            containerColor = if (isHomeSelected) LavenderBlush else PastelPink,
+            contentColor = SoftDarkCharcoal,
             elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 4.dp)
         ) {
             Icon(
