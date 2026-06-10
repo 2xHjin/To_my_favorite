@@ -49,6 +49,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -65,6 +66,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
 import com.example.tomyfavorite.R
 import com.example.tomyfavorite.ui.components.HomeTab
 import com.example.tomyfavorite.ui.theme.LavenderBlush
@@ -72,7 +74,6 @@ import com.example.tomyfavorite.ui.theme.PastelPink
 import com.example.tomyfavorite.ui.theme.SoftCreamPink
 import com.example.tomyfavorite.ui.theme.SoftDarkCharcoal
 import com.example.tomyfavorite.ui.theme.SoftGrayDivider
-
 
 @Composable
 fun HomeSectionDivider() {
@@ -86,6 +87,71 @@ fun HomeSectionDivider() {
 
 // 기존 탭 Enum은 그대로 유지하되, 구조 결합용으로 사용합니다.
 enum class CustomTab { MEMO, SETTINGS }
+
+
+// 1. Stateful Screen (최상위: ViewModel 금고 관리)
+@Composable
+fun HomeScreen(
+    viewModel: HomeViewModel = HomeViewModel() // 뷰모델 주입
+) {
+    // 뷰모델의 금고(StateFlow)를 실시간 관찰하여 uiState 보따리로 변환
+    val uiState by viewModel.uiState.collectAsState()
+
+    // 네비게이션 탭 상태 관리
+    var currentTab by remember { mutableStateOf(HomeTab.HOME) }
+
+    // 그림쟁이 컴포저블(HomeContent)에게 모든 데이터와 상태를 토스!
+    HomeContent(
+        uiState = uiState,
+        currentTab = currentTab,
+        onTabClick = { clickedTab -> currentTab = clickedTab }
+    )
+}
+
+@Composable
+fun HomeContent(
+    uiState: HomeUiState,                 // ◀ 여기서 뷰모델의 데이터 보따리를 받음!
+    currentTab: HomeTab,
+    onTabClick: (HomeTab) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    // 안드로이드 공식 레이아웃 뼈대인 Scaffold를 사용하여
+    // 상단바와 바텀바를 완벽한 정석 위치에 고정합니다.
+    Scaffold(
+        topBar = {
+            HomeTopAppBar(onMenuClick = { /* 메뉴 제어 로직 */ })
+        },
+        bottomBar = {
+            // ★ 새로 만든 반원 커스텀 바텀바로 교체 장착!
+            HomeCustomBottomBar(
+                currentTab = currentTab,
+                onTabClick = onTabClick
+            )
+        },
+        modifier = modifier
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .verticalScroll(rememberScrollState()) // 세로 스크롤 장착
+        ) {
+            // ★ 핵심: 보따리(uiState)에서 각 조각에 맞는 알맹이 리스트만 쏙쏙 꺼내서 주입합니다!
+            FavoriteImagePager(images = uiState.images)
+
+            StickerBar()
+
+            HomeSectionDivider()
+
+            RecentPhotosSection(recentPhotos = uiState.recentPhotos)
+
+            HomeSectionDivider()
+
+            // 최근 메모 영역에 데이터 주입
+            RecentMemosSection(recentMemos = uiState.recentMemos)
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -462,47 +528,28 @@ fun HomeTopAppBarPreview() {
 @Composable
 fun HomeScreenPreview() {
 
-    // 1. 상태 호이스팅의 중심점: 현재 어떤 탭에 있는지 여기서 상태를 단 하나로 관리합니다.
-    var currentTab by remember { mutableStateOf(HomeTab.HOME) }
+    // 프리뷰에서는 ViewModel을 생성하지 않고, 직접 원하는 가짜 보따리를 조립합니다.
+    val fakeUiState = HomeUiState(
+        images = listOf("photo1", "photo2", "photo3"),
+        recentPhotos = listOf("rec1", "rec2", "rec3"),
+        recentMemos = listOf(
+            MemoSummary("프리뷰 제목 1", "안드로이드 스튜디오 프리뷰에서 보여질 가짜 내용입니다."),
+            MemoSummary("프리뷰 제목 2", "UI 레이아웃이 예쁘게 깨지지 않고 나오는지 테스트 중!"),
+            MemoSummary("프리뷰 제목 3", "UI 레이아웃이 예쁘게 깨지지 않고 나오는지 테스트 중!"),
+            MemoSummary("프리뷰 제목 4", "신기하다 신기해!")
+            )
 
-    val mockImages = listOf("photo1", "photo2", "photo3")
-    val mockRecentPhotos = listOf("rec1", "rec2", "rec3") // 최근 사진 가짜 데이터
-
-// 최근 메모 가짜 데이터 3개 준비
-    val mockRecentMemos = listOf(
-        MemoSummary("오늘의 최애 스케줄", "엠카방송 본방사수하기! 잊지 말고 투표도 꼭 참여하자."),
-        MemoSummary("덕질 일기", "오늘 올라온 비하인드 포토 카드 퀄리티 진짜 역대급이다 ㅠㅠ"),
-        MemoSummary("구매 리스트", "시즌 그리팅 앨범 패키지 B세트 공동구매 수량 확인 필요")
     )
 
-    // 안드로이드 공식 레이아웃 뼈대인 Scaffold를 사용하여
-    // 상단바와 바텀바를 완벽한 정석 위치에 고정합니다.
-    Scaffold(
-        topBar = {
-            HomeTopAppBar(onMenuClick = { /* 메뉴 제어 */ })
-        },
-        bottomBar = {
-            // ★ 새로 만든 반원 커스텀 바텀바로 교체 장착!
-            HomeCustomBottomBar(
-                currentTab = currentTab,
-                onTabClick = { clickedTab -> currentTab = clickedTab }
-            )
-        }
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
-        ) {
-            FavoriteImagePager(images = mockImages)
-            StickerBar()
-            HomeSectionDivider()
-            RecentPhotosSection(recentPhotos = mockRecentPhotos)
-            HomeSectionDivider()
-            RecentMemosSection(recentMemos = mockRecentMemos)
-        }
-    }
+
+    var fakeTab by remember { mutableStateOf(HomeTab.HOME) }
+
+    // 뷰모델 연결이 없는 HomeContent를 바로 호출하므로 빨간 줄 없이 실시간 디자인 확인 가능!
+    HomeContent(
+        uiState = fakeUiState,
+        currentTab = fakeTab,
+        onTabClick = { fakeTab = it }
+    )
 }
 
 
