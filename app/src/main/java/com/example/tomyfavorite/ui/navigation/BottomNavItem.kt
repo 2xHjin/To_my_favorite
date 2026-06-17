@@ -1,11 +1,10 @@
-package com.example.tomyfavorite.ui.components
+package com.example.tomyfavorite.ui.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
 import com.example.tomyfavorite.R
 
 
