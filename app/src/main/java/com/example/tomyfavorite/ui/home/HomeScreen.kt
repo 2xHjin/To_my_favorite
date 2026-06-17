@@ -91,36 +91,20 @@ fun HomeScreen(
     // 뷰모델의 금고(StateFlow)를 실시간 관찰하여 uiState 보따리로 변환
     val uiState by viewModel.uiState.collectAsState()
 
-    // 네비게이션 탭 상태 관리
-    var currentTab by remember { mutableStateOf(HomeTab.HOME) }
-
-    // 그림쟁이 컴포저블(HomeContent)에게 모든 데이터와 상태를 토스!
-    HomeContent(
-        uiState = uiState,
-        currentTab = currentTab,
-        onTabClick = { clickedTab -> currentTab = clickedTab }
-    )
+    // 그림쟁이 컴포저블(HomeContent)에게 모든 데이터를 토스!
+    HomeContent(uiState = uiState)
 }
 
 @Composable
 fun HomeContent(
     uiState: HomeUiState,                 // ◀ 여기서 뷰모델의 데이터 보따리를 받음!
-    currentTab: HomeTab,
-    onTabClick: (HomeTab) -> Unit,
     modifier: Modifier = Modifier
 ) {
     // 안드로이드 공식 레이아웃 뼈대인 Scaffold를 사용하여
-    // 상단바와 바텀바를 완벽한 정석 위치에 고정합니다.
+    // 상단바를 완벽한 정석 위치에 고정합니다.
     Scaffold(
         topBar = {
             HomeTopAppBar(onMenuClick = { /* 메뉴 제어 로직 */ })
-        },
-        bottomBar = {
-            // ★ 새로 만든 반원 커스텀 바텀바로 교체 장착!
-            HomeCustomBottomBar(
-                currentTab = currentTab,
-                onTabClick = onTabClick
-            )
         },
         modifier = modifier
     ) { innerPadding ->
@@ -539,11 +523,7 @@ fun HomeScreenPreview() {
     var fakeTab by remember { mutableStateOf(HomeTab.HOME) }
 
     // 뷰모델 연결이 없는 HomeContent를 바로 호출하므로 빨간 줄 없이 실시간 디자인 확인 가능!
-    HomeContent(
-        uiState = fakeUiState,
-        currentTab = fakeTab,
-        onTabClick = { fakeTab = it }
-    )
+    HomeContent(uiState = fakeUiState)
 }
 
 
