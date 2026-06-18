@@ -57,6 +57,9 @@ dependencies {
     // Jetpack Compose Navigation 라이브러리 추가
     implementation("androidx.navigation:navigation-compose:2.8.5")
 
+    // 2026년 현재 Jetpack Compose에서 안전하게 구동되는 최신 안정화 버전입니다.
+    implementation("io.coil-kt:coil-compose:2.6.0")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
