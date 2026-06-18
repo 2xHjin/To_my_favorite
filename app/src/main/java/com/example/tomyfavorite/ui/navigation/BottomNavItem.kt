@@ -1,10 +1,7 @@
 package com.example.tomyfavorite.ui.navigation
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.ui.graphics.vector.ImageVector
 import com.example.tomyfavorite.R
 
 
@@ -19,8 +16,8 @@ sealed class BottomNavItem(val route: String, val icon: Int, val label: String) 
  */
 
 // 탭의 종류를 안전하게 관리하기 위해 선언한 Enum Class입니다. (SoC 구조)
-enum class HomeTab(val titleId: Int, val icon: ImageVector) {
-    HOME( R.string.home_tab_title_home, Icons.Default.Home),
-    MEMO(R.string.home_tab_title_memo, Icons.AutoMirrored.Filled.List),
-    SETTINGS(R.string.home_tab_title_settings, Icons.Default.Settings)
+enum class HomeTab(val titleId: Int, val icon: Int) {
+    HOME( R.string.home_tab_title_home, R.drawable.ic_home),
+    MEMO(R.string.home_tab_title_memo, R.drawable.ic_memo),
+    GALLERY(R.string.home_tab_title_gallery,  R.drawable.ic_gallery)
 }

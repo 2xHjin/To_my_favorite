@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.tomyfavorite.ui.gallery.GalleryScreen
 import com.example.tomyfavorite.ui.home.HomeScreen
 
 @Composable
@@ -33,8 +34,14 @@ fun AppNavHost(
         }
 
         // 4. 설정 화면 경로 정의 (임시 뼈대)
-        composable(route = HomeTab.SETTINGS.name) {
-            DummySettingsScreen()
+        composable(route = HomeTab.GALLERY.name) {
+//DummySettingsScreen()
+            GalleryScreen(
+                onFolderClick = { folderId ->
+                    // 나중에 여기서 상세 그리드 화면(FolderDetailScreen)으로 이동하는 로직을 작성합니다.
+                    navController.navigate("folder_detail/$folderId")
+                }
+            )
         }
     }
 }

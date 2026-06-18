@@ -12,6 +12,6 @@
 
     <string name="home_tab_title_home">홈</string>
     <string name="home_tab_title_memo">메모장</string>
-    <string name="home_tab_title_settings">설정</string>
+    <string name="home_tab_title_gallery">설정</string>
 
 </resources>

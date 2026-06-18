@@ -54,6 +54,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -435,34 +436,36 @@ fun HomeCustomBottomBar(
             containerColor = PastelPink, // 파스텔 핑크 테마 색상
             tonalElevation = 0.dp
         ) {
-            // 왼쪽 메뉴: 메모장
-            val isMemoSelected = currentTab == HomeTab.MEMO
+
+            // 왼쪽 메뉴: 설정
+            val isGallerySelected = currentTab == HomeTab.GALLERY
             IconButton(
-                onClick = { onTabClick(HomeTab.MEMO) },
+                onClick = { onTabClick(HomeTab.GALLERY) },
                 modifier = Modifier.weight(1f)
             ) {
                 Icon(
-                    imageVector = Icons.Default.List,
-                    contentDescription = "메모장",
-                    tint = if (isMemoSelected) SoftDarkCharcoal else SoftDarkCharcoal.copy(alpha = 0.4f)
+                    painter = painterResource(id = HomeTab.GALLERY.icon),
+                    contentDescription = stringResource(id = HomeTab.GALLERY.titleId),
+                    tint = if (isGallerySelected) SoftDarkCharcoal else SoftDarkCharcoal.copy(alpha = 0.4f)
                 )
             }
 
             // 💡 중앙 공간 비워두기: 이 자리에 위의 반원 버튼이 겹쳐서 안착할 것입니다.
             Spacer(modifier = Modifier.weight(1f))
 
-            // 오른쪽 메뉴: 설정
-            val isSettingsSelected = currentTab == HomeTab.SETTINGS
+            // 오른쪽 메뉴: 메모장
+            val isMemoSelected = currentTab == HomeTab.MEMO
             IconButton(
-                onClick = { onTabClick(HomeTab.SETTINGS) },
+                onClick = { onTabClick(HomeTab.MEMO) },
                 modifier = Modifier.weight(1f)
             ) {
                 Icon(
-                    imageVector = Icons.Default.Settings,
-                    contentDescription = "설정",
-                    tint = if (isSettingsSelected) SoftDarkCharcoal else SoftDarkCharcoal.copy(alpha = 0.4f)
+                    painter = painterResource(id = HomeTab.MEMO.icon),
+                    contentDescription = stringResource(id = HomeTab.MEMO.titleId),
+                    tint = if (isMemoSelected) SoftDarkCharcoal else SoftDarkCharcoal.copy(alpha = 0.4f)
                 )
             }
+
         }
 
         // 2. ★ 주인공: 중앙 상단에 둥둥 떠서 반원형 홈 버튼 역할을 하는 FloatingActionButton
@@ -480,8 +483,8 @@ fun HomeCustomBottomBar(
             elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 4.dp)
         ) {
             Icon(
-                imageVector = Icons.Default.Home,
-                contentDescription = "홈 화면",
+                painter = painterResource(id = HomeTab.HOME.icon),
+                contentDescription = stringResource(id = HomeTab.HOME.titleId),
                 modifier = Modifier.size(30.dp)
             )
         }
