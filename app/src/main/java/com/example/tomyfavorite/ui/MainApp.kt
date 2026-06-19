@@ -7,6 +7,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.tomyfavorite.ui.home.HomeCustomBottomBar
@@ -41,7 +42,9 @@ fun MainApp() {
                 }
             )
         },
+        containerColor = Color.Transparent,
         modifier = Modifier.fillMaxSize()
+
     ) { innerPadding ->
         // 4. 바텀바를 제외한 중앙 무대에 네비게이션 호스트를 올립니다.
         AppNavHost(

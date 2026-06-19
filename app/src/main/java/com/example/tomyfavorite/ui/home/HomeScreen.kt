@@ -8,10 +8,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -107,12 +111,14 @@ fun HomeContent(
         topBar = {
             HomeTopAppBar(onMenuClick = { /* 메뉴 제어 로직 */ })
         },
+        containerColor = Color.Transparent, // ◀ 핵심: Scaffold 배경을 투명하게 해서 뒤가 비치게 함!
         modifier = modifier
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
+                //.padding(innerPadding)
+                .padding(top = innerPadding.calculateTopPadding()) // 상단만 적용
                 .verticalScroll(rememberScrollState()) // 세로 스크롤 장착
         ) {
             // ★ 핵심: 보따리(uiState)에서 각 조각에 맞는 알맹이 리스트만 쏙쏙 꺼내서 주입합니다!
@@ -417,27 +423,29 @@ fun RecentMemosSection(
     }
 }
 
-
 @Composable
 fun HomeCustomBottomBar(
-    currentTab: HomeTab, // 전체 탭 상태 공유
+    currentTab: HomeTab,
     onTabClick: (HomeTab) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // 하단 전체 영역을 조절하기 위한 Box 상자
+    // 💡 마법의 1줄: 현재 핸드폰의 시스템 하단바(소프트키) 높이를 동적으로 측정합니다!
+    val navBarHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+
     Box(
         modifier = modifier.fillMaxWidth(),
-        contentAlignment = Alignment.BottomCenter
+        contentAlignment = Alignment.BottomCenter,
     ) {
-        // 1. 배경이 되는 바텀 앱바 (양옆 메뉴 배치 및 둥근 상단 모서리)
+        // 1. 배경이 되는 바텀 앱바
         BottomAppBar(
-            // 피그마처럼 상단 모서리만 아주 둥글게 깎아서 다꾸 속지 느낌을 냅니다.
-            modifier = Modifier.clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
-            containerColor = PastelPink, // 파스텔 핑크 테마 색상
-            tonalElevation = 0.dp
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
+            containerColor = PastelPink,
+            tonalElevation = 0.dp,
+            // 💡 핵심 1: 다시 기본 인셋을 허용하여, 핑크색 배경이 시스템 소프트키 영역까지 꽉 채우도록 만듭니다!
+            windowInsets = WindowInsets.navigationBars
         ) {
-
-            // 왼쪽 메뉴: 설정
             val isGallerySelected = currentTab == HomeTab.GALLERY
             IconButton(
                 onClick = { onTabClick(HomeTab.GALLERY) },
@@ -445,15 +453,13 @@ fun HomeCustomBottomBar(
             ) {
                 Icon(
                     painter = painterResource(id = HomeTab.GALLERY.icon),
-                    contentDescription = stringResource(id = HomeTab.GALLERY.titleId),
+                    contentDescription = stringResource(id = HomeTab.GALLERY.titleId ?: 0),
                     tint = if (isGallerySelected) SoftDarkCharcoal else SoftDarkCharcoal.copy(alpha = 0.4f)
                 )
             }
 
-            // 💡 중앙 공간 비워두기: 이 자리에 위의 반원 버튼이 겹쳐서 안착할 것입니다.
             Spacer(modifier = Modifier.weight(1f))
 
-            // 오른쪽 메뉴: 메모장
             val isMemoSelected = currentTab == HomeTab.MEMO
             IconButton(
                 onClick = { onTabClick(HomeTab.MEMO) },
@@ -461,36 +467,34 @@ fun HomeCustomBottomBar(
             ) {
                 Icon(
                     painter = painterResource(id = HomeTab.MEMO.icon),
-                    contentDescription = stringResource(id = HomeTab.MEMO.titleId),
+                    contentDescription = stringResource(id = HomeTab.MEMO.titleId ?: 0),
                     tint = if (isMemoSelected) SoftDarkCharcoal else SoftDarkCharcoal.copy(alpha = 0.4f)
                 )
             }
-
         }
 
-        // 2. ★ 주인공: 중앙 상단에 둥둥 떠서 반원형 홈 버튼 역할을 하는 FloatingActionButton
+        // 2. ★ 주인공: 반원형 홈 버튼
         val isHomeSelected = currentTab == HomeTab.HOME
         FloatingActionButton(
             onClick = { onTabClick(HomeTab.HOME) },
-            // 바텀 바 살짝 위로 걸치게 겹치도록 세로 오프셋(Y축 위치)을 살짝 위로 마이너스 조정합니다.
+            // 💡 핵심 2: 핑크 바텀바가 소프트키만큼 높아졌으니, 홈 버튼도 (기본 띄움 45dp + 소프트키 높이)만큼 공중으로 더 끌어올립니다!
             modifier = Modifier
-                .offset(y = (-24).dp)
+                .align(Alignment.BottomCenter)
+                .offset(y = -(45.dp + navBarHeight))
                 .size(60.dp),
-            shape = CircleShape, // 완벽한 동그라미 반원 형태 강제
-            // 홈 탭이 선택되면 더 부드러운 화이트 핑크, 해제되면 기본 파스텔 핑크
+            shape = CircleShape,
             containerColor = if (isHomeSelected) LavenderBlush else PastelPink,
             contentColor = SoftDarkCharcoal,
             elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 4.dp)
         ) {
             Icon(
                 painter = painterResource(id = HomeTab.HOME.icon),
-                contentDescription = stringResource(id = HomeTab.HOME.titleId),
+                contentDescription = stringResource(id = HomeTab.HOME.titleId ?: 0),
                 modifier = Modifier.size(30.dp)
             )
         }
     }
 }
-
 /*
 @Preview(showBackground = true)
 @Composable
